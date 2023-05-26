@@ -2,3 +2,7 @@ name = "ForthDDMicroDisplays"
 uuid = "f8313d3e-28e8-49fc-984e-621ce0952ad8"
 authors = ["Dohyeon Lee <dleh428@kaist.ac.kr>"]
 version = "0.1.0"
+
+[deps]
+Libdl = "8f399da3-3557-5675-b5ff-fb832c97cbdb"
+MicroDisplays = "9407d5d2-496b-4182-b772-f5b65742a6a2"

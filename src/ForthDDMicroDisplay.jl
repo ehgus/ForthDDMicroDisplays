@@ -5,7 +5,7 @@ mutable struct ForthDDMicroDisplay <: MicroDisplay
     serial::String
     isopen::Bool
     function ForthDDMicroDisplay(device_type,port="USB")
-        if display_type != "R11"
+        if device_type != "R11"
             @error("Other microdisplay is not yet implemented")
         end
         if port != "USB"
@@ -20,12 +20,12 @@ function open!(microdisplay::ForthDDMicroDisplay)
     if isopen(microdisplay)
         return
     end
-    serial_list = Wrapper.device_list(device_type,port)
+    serial_list = Wrapper.device_list(microdisplay.device_type, microdisplay.port)
     if isempty(serial_list)
         @error("device is not detected. Check the connection and GUID")
     end
     serial = serial_list[1]
-    Wrapper.open(port, serial)
+    Wrapper.open(microdisplay.port, serial)
     # sucess connection
     microdisplay.serial = serial
     microdisplay.isopen = true
