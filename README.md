@@ -1,4 +1,4 @@
-# ForthDDSLMs.jl
+# ForthDDMicroDisplays.jl
 
 A SLM controller from Forth Dimension Displays
 
