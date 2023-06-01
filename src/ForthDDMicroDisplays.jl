@@ -3,21 +3,19 @@ module ForthDDMicroDisplays
 using MicroDisplays
 
 import MicroDisplays:
-    open!,
-    close!,
-    start!,
-    stop!,
-    write!,
+    open,
+    close,
+    write,
     isopen,
     size
 
 export ForthDDMicroDisplay,
-    open!,
-    close!,
+    open,
+    close,
     start!,
     stop!,
     avail_image,
-    write!,
+    write,
     isopen,
     size
 

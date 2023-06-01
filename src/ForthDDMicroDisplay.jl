@@ -16,7 +16,7 @@ mutable struct ForthDDMicroDisplay <: MicroDisplay
     end
 end
 
-function open!(microdisplay::ForthDDMicroDisplay)
+function open(microdisplay::ForthDDMicroDisplay)
     if isopen(microdisplay)
         return
     end
@@ -32,7 +32,7 @@ function open!(microdisplay::ForthDDMicroDisplay)
     return
 end
 
-function close!(microdisplay::ForthDDMicroDisplay)
+function close(microdisplay::ForthDDMicroDisplay)
     if !isopen(microdisplay)
         return
     end
@@ -67,7 +67,7 @@ function avail_image(microdisplay::ForthDDMicroDisplay)
     end
 end
 
-function write!(microdisplay::ForthDDMicroDisplay, RO_name)
+function write(microdisplay::ForthDDMicroDisplay, RO_name)
     if microdisplay.device_type == "R11"
         Wrapper.R11_select_RO(RO_name)
     else
