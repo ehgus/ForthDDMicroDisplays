@@ -1,23 +1,23 @@
 module ForthDDMicroDisplays
 
-using MicroDisplays
+using Reexport
+using VariableIOs
+using VariableIOs.VariableArrayIOs
 
-import MicroDisplays:
+@reexport import VariableIOs:
+    activate,
+    deactivate,
+    isactivated
+
+@reexport import VariableIOs.VariableArrayIOs:
+    region_of_interest
+
+import Base:
     open,
     close,
-    write,
     isopen,
-    size
-
-export ForthDDMicroDisplay,
-    open,
-    close,
-    start!,
-    stop!,
-    avail_image,
-    write,
-    isopen,
-    size
+    # while execution
+    display
 
 include("API/Wrapper.jl")
 include("ForthDDMicroDisplay.jl")

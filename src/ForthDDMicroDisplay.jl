@@ -1,86 +1,61 @@
 
-mutable struct ForthDDMicroDisplay <: MicroDisplay
+struct ForthDDMicroDisplay <: IODeviceName
     device_type::String
     port::String
+    function ForthDDMicroDisplay()
+        # For now, it only support R11 with USB connection
+        new("R11", "USB")
+    end
+end
+
+mutable struct ForthDDMicroDisplayIOStream <: VariableArrayIOStream
+    device_type::String
     serial::String
     isopen::Bool
-    function ForthDDMicroDisplay(device_type,port="USB")
-        if device_type != "R11"
-            @error("Other microdisplay is not yet implemented")
-        end
-        if port != "USB"
-            @error("This port except USB is not implemented")
-        end
-        serial = ""
-        new(device_type, port, serial, false)
-    end
 end
 
-function open(microdisplay::ForthDDMicroDisplay)
-    if isopen(microdisplay)
-        return
-    end
-    serial_list = Wrapper.device_list(microdisplay.device_type, microdisplay.port)
+function open(md::ForthDDMicroDisplay)
+    serial_list = Wrapper.device_list(md.device_type, md.port)
     if isempty(serial_list)
-        @error("device is not detected. Check the connection and GUID")
+        error("device is not detected. Check the connection and GUID")
     end
     serial = serial_list[1]
-    Wrapper.open(microdisplay.port, serial)
+    Wrapper.open(md.port, serial)
     # sucess connection
-    microdisplay.serial = serial
-    microdisplay.isopen = true
-    return
+    ForthDDMicroDisplayIOStream(md.device_type, serial, true)
 end
 
-function close(microdisplay::ForthDDMicroDisplay)
-    if !isopen(microdisplay)
+function close(md::ForthDDMicroDisplayIOStream)
+    if !isopen(md)
         return
     end
     Wrapper.close()
-    # success disconnection
-    microdisplay.serial = ""
-    microdisplay.isopen = false
-    return
+    md.isopen = false
+    md
 end
 
-function start!(microdisplay::ForthDDMicroDisplay)
-    if microdisplay.device_type == "R11"
-        Wrapper.R11_start()
-    else
-        @error("unsupported device")
-    end
+isopen(md::ForthDDMicroDisplayIOStream) = md.isopen
+
+function activate(md::ForthDDMicroDisplayIOStream)
+    Wrapper.R11_start()
 end
 
-function stop!(microdisplay::ForthDDMicroDisplay)
-    if microdisplay.device_type == "R11"
-        Wrapper.R11_stop()
-    else
-        @error("unsupported device")
-    end
+function deactivate(md::ForthDDMicroDisplayIOStream)
+    Wrapper.R11_stop()
 end
 
-function avail_image(microdisplay::ForthDDMicroDisplay)
-    if microdisplay.device_type == "R11"
-        Wrapper.R11_list_RO()
-    else
-        @error("unsupported device")
-    end
+function isactivated(md::ForthDDMicroDisplayIOStream)
+    error("Not implemented")
 end
 
-function write(microdisplay::ForthDDMicroDisplay, RO_name)
-    if microdisplay.device_type == "R11"
-        Wrapper.R11_select_RO(RO_name)
-    else
-        @error("unsupported device")
-    end
+function avail_image(md::ForthDDMicroDisplayIOStream)
+    Wrapper.R11_list_RO()
 end
 
-isopen(microdisplay::ForthDDMicroDisplay) = microdisplay.isopen
+function display(md::ForthDDMicroDisplayIOStream, RO_name)
+    Wrapper.R11_select_RO(RO_name)
+end
 
-function size(microdisplay::ForthDDMicroDisplay)
-    if microdisplay.device_type == "R11"
-        Wrapper.R11_roi()
-    else
-        @error("unsupported device")
-    end
+function region_of_interest(md::ForthDDMicroDisplayIOStream)
+    Wrapper.R11_roi()
 end

@@ -98,12 +98,9 @@ function device_list(device_type::String ,port::String)
 end
 
 function open(port::String,serial::String)
-    if port == "USB"
-        devpath = split(serial,":")[1]
-        @rccheck FDD.DevOpenWinUSB(Base.cconvert(Cstring,devpath), 1000)
-    else
-        erorr("This package only support USB connection for now")
-    end
+    @assert port == "USB" "This package only support USB connection for now"
+    devpath = split(serial,":")[1]
+    @rccheck FDD.DevOpenWinUSB(Base.cconvert(Cstring,devpath), 1000)
 end
 
 function close()
