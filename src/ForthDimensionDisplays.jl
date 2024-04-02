@@ -4,6 +4,8 @@ using Reexport
 using VariableIOs
 using VariableIOs.VariableArrayIOs
 
+export ForthDimensionDisplay
+
 @reexport import VariableIOs:
     activate,
     deactivate,

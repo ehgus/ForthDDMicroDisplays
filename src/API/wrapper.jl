@@ -9,48 +9,14 @@ include("fdd_r11_lib.jl")
 using .TypeAlias
 using .FDDstruct
 
-const SLM_USB_GUID = Dict(
-    "R11" => "54ED7AC9-CC23-4165-BE32-79016BAFB950",
-)
 # ----------------------------------------------------------------------
 #    FDD wrapper
 # ----------------------------------------------------------------------
 
 function lib_version()
-    LIB_VERSION_MAX_LEN = 64
-    version = zeros(Cchar,LIB_VERSION_MAX_LEN)
+    version = zeros(Cchar,MAX_TEXT_LEN)
     FDD.LibGetVersion(version)
     unsafe_string(pointer(version))
-end
-
-function device_list(device_type::String ,port::String)
-    devlist = Ref(Ptr{Dev}(0))
-    devcnt = Ref(UInt16(0))
-    if port == "USB"
-        guid = Base.cconvert(Cstring,SLM_USB_GUID[device_type])
-        FDD.DevEnumerateWinUSB(guid, devlist, devcnt)
-    else
-        erorr("This package only support USB connection for now")
-    end
-    devid = Ref(Ptr{Cchar}(0))
-    serial_list = Vector{String}(undef, devcnt[])
-    FDD.DevGetFirst(devid)
-    for i = 1:devcnt[]
-        serial_list[i] = unsafe_string(devid[])
-        FDD.DevGetNext(devid)
-    end
-
-    return serial_list
-end
-
-function open(port::String,serial::String)
-    @assert port == "USB" "This package only support USB connection for now"
-    devpath = split(serial,":")[1]
-    FDD.DevOpenWinUSB(Base.cconvert(Cstring,devpath), 1000)
-end
-
-function close()
-    FDD.DevClose()
 end
 
 # ----------------------------------------------------------------------
