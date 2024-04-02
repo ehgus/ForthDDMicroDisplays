@@ -19,6 +19,10 @@ import Base:
     # while execution
     display
 
+function __init__()
+    @assert Sys.iswindows() "It only works on windows"
+end
+
 include("API/wrapper.jl")
 include("micro_display.jl")
 
