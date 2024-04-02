@@ -1,7 +1,7 @@
 module FDD
 
 using ..TypeAlias
-using ..APIstruct
+using ..FDDStruct
 import Libdl: dlopen, dlsym
 
 dir_path = "C:/Program Files/Forth dimension display/Software/R11CommLib/examples/msvc/lib"

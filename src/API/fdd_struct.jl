@@ -1,4 +1,4 @@
-module APIstruct
+module FDDStruct
 
 export Dev
 
@@ -12,6 +12,5 @@ struct Dev
     id::Ref{Cchar}
     next::Ptr{Dev}
 end
-
 
 end

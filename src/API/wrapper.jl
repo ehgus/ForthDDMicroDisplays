@@ -1,10 +1,12 @@
 module Wrapper
 
-include("TypeAlias.jl")
-include("APIstruct.jl")
+include("alias.jl")
+include("fdd_struct.jl")
+include("fdd_common_lib.jl")
+include("fdd_r11_lib.jl")
 
 using .TypeAlias
-using .APIstruct
+using .FDDStruct
 # ----------------------------------------------------------------------
 #    Basic error handler
 # ----------------------------------------------------------------------
@@ -69,9 +71,9 @@ const SLM_USB_GUID = Dict(
 # ----------------------------------------------------------------------
 #    FDD wrapper
 # ----------------------------------------------------------------------
-include("FDD.jl")
 
 function lib_version()
+    LIB_VERSION_MAX_LEN = 64
     version = zeros(Cchar,LIB_VERSION_MAX_LEN)
     @rccheck FDD.LibGetVersion(version)
     unsafe_string(pointer(version))
@@ -110,9 +112,6 @@ end
 # ----------------------------------------------------------------------
 #    R11 wrapper
 # ----------------------------------------------------------------------
-include("R11.jl")
-
-EF_PAGE_SIZE = 
 
 function R11_roi()
     disp_type = Ref(UInt8(0))

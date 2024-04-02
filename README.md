@@ -1,4 +1,4 @@
-# ForthDDMicroDisplays.jl
+# ForthDimensionDisplays.jl
 
 A SLM controller from Forth Dimension Displays
 
@@ -7,7 +7,7 @@ It is early stage of the development
 ## example
 
 ```julia
-using ForthDDMicroDisplays
+using ForthDimensionDisplays
 
 DDdisp = ForthDDMicroDisplay("R11");
 

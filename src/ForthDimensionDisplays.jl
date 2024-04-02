@@ -1,4 +1,4 @@
-module ForthDDMicroDisplays
+module ForthDimensionDisplays
 
 using Reexport
 using VariableIOs
@@ -19,7 +19,7 @@ import Base:
     # while execution
     display
 
-include("API/Wrapper.jl")
-include("ForthDDMicroDisplay.jl")
+include("API/wrapper.jl")
+include("micro_display.jl")
 
-end # module ForthDDMicrodisplays
+end # module ForthDimensionDisplays

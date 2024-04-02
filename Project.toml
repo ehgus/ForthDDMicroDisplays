@@ -1,5 +1,5 @@
-name = "ForthDDMicroDisplays"
-uuid = "f8313d3e-28e8-49fc-984e-621ce0952ad8"
+name = "ForthDimensionDisplays"
+uuid = "f2716778-a29d-5e05-adac-1cc4659e7616"
 authors = ["Dohyeon Lee <dleh428@kaist.ac.kr>"]
 version = "0.1.0"
 
