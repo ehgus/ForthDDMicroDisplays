@@ -1,7 +1,7 @@
 module FDD
 
 using ..TypeAlias
-using ..FDDStruct
+using ..FDDstruct
 using ..FDDerror
 import Libdl: dlopen, dlsym
 

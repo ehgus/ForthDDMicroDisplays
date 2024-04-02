@@ -2,12 +2,12 @@ module Wrapper
 
 include("alias.jl")
 include("fdd_struct.jl")
-include("error_handler.jl")
+include("fdd_error.jl")
 include("fdd_common_lib.jl")
 include("fdd_r11_lib.jl")
 
 using .TypeAlias
-using .FDDStruct
+using .FDDstruct
 
 const SLM_USB_GUID = Dict(
     "R11" => "54ED7AC9-CC23-4165-BE32-79016BAFB950",

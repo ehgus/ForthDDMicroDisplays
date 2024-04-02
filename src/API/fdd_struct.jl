@@ -1,4 +1,4 @@
-module FDDStruct
+module FDstruct
 
 export Dev
 
