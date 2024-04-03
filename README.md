@@ -2,39 +2,26 @@
 
 A SLM controller from Forth Dimension Displays
 
-It is early stage of the development
+It is early stage of the development and only tested with QXGA with R11 interface.
 
 ## example
 
 ```julia
 using ForthDimensionDisplays
 
-DDdisp = ForthDDMicroDisplay("R11");
+md = ForthDimensionDisplay("winUSB",:R11)
 
-open!(DDdisp)
-ro_list = avail_image(DDdisp)
-select_RO(DDdisp, ro_list[1])
-
-using ForthDDSLMs.Wrapper
-using ForthDDSLMs.Wrapper.R11
-
-act_type = Ref(UInt8(0))
-R11.RpcRoGetActivationType(act_type)
-@show act_type[] #x01: immediate, x02: sw, x04: hw
-act_state = Ref(UInt8(0))
-R11.RpcRoGetActivationState(act_state)
-@show act_state[]
-
-R11.RpcRoActivate()
-
-R11.RpcRoDeactivate()
-
-function test_sleep()
-    R11.RpcRoActivate()
-    sleep(3)
-    R11.RpcRoDeactivate()
+open(md) do io
+    @show imagedim(io)
+    @show running_order(io)
+    @show trigger_mode(io)
+    ro_names =  available_running_orders(io)
+    running_order!(io,ro_names[end])
+    @show running_order(io)
+    @show trigger_mode(io)
+    activate(io) do activate_io
+        sleep(3)
+    end
 end
 
-# terminate control
-close(DDdisp)
 ```

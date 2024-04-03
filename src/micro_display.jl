@@ -51,7 +51,9 @@ function open(md::ForthDimensionDisplay; timeout_millisecond = 1000)
         baudrate = DEVICE_INFO[md.interface][:rs485_baudrate]
         FDD.DevOpenComPort(dev_id, timeout_millisecond, baudrate, false)
     end
-    ForthDimensionDisplayIOStream(dev_name, dev_id, md.interface, true)
+    io = ForthDimensionDisplayIOStream(dev_name, dev_id, md.interface, true)
+    deactivate(io)
+    io
 end
 
 function close(md::ForthDimensionDisplayIOStream)
@@ -65,26 +67,98 @@ end
 
 isopen(md::ForthDimensionDisplayIOStream) = getfield(md, :isopen)
 
-function activate(md::ForthDimensionDisplayIOStream)
-    Wrapper.R11_start()
+function activate(md::ForthDimensionDisplayIOStream; timeout_millisecond = 1000)
+    @assert isopen(md) "The microdisplay is not accessible"
+    @assert md.interface === :R11 "Other interfaces except R11 are not supported"
+    R11.RpcRoActivate()
 end
 
 function deactivate(md::ForthDimensionDisplayIOStream)
-    Wrapper.R11_stop()
+    @assert isopen(md) "The microdisplay is not accessible"
+    @assert md.interface === :R11 "Other interfaces except R11 are not supported"
+    R11.RpcRoDeactivate()
 end
 
 function isactivated(md::ForthDimensionDisplayIOStream)
-    error("Not implemented")
+    @assert isopen(md) "The microdisplay is not accessible"
+    @assert md.interface === :R11 "Other interfaces except R11 are not supported"
+    ref_act_state = Ref(UInt8(0))
+    R11.RpcRoGetActivationState(ref_act_state)
+    act_state = ref_act_state[]
+    if act_state == 0x56
+        true
+    else
+        false
+    end
 end
 
-function avail_image(md::ForthDimensionDisplayIOStream)
-    Wrapper.R11_list_RO()
+function available_running_orders(md::ForthDimensionDisplayIOStream)
+    @assert isopen(md) "The microdisplay is not accessible"
+    @assert md.interface === :R11 "Other interfaces except R11 are not supported"
+    ro_cnt =  Ref(UInt16(0))
+    R11.RpcRoGetCount(ro_cnt)
+    ro_name_list = Vector{String}(undef, ro_cnt[])
+    max_length = 32
+    name = zeros(Cchar, max_length)
+    for idx = 1:ro_cnt[]
+        R11.RpcRoGetName(idx-1, name, max_length)
+        ro_name_list[idx] = unsafe_string(pointer(name))
+    end
+    ro_name_list
 end
 
-function display(md::ForthDimensionDisplayIOStream, RO_name)
-    Wrapper.R11_select_RO(RO_name)
+function running_order(md::ForthDimensionDisplayIOStream)
+    ro_name_list = available_running_orders(md)
+    ref_idx = Ref(UInt16(0xffff))
+    R11.RpcRoGetSelected(ref_idx)
+    idx = ref_idx[] + 1
+    ro_name_list[idx]
 end
 
-function region_of_interest(md::ForthDimensionDisplayIOStream)
-    Wrapper.R11_roi()
+function running_order!(md::ForthDimensionDisplayIOStream, ro_name::String)
+    ro_name_list = available_running_orders(md)
+    idx = findfirst(==(ro_name), ro_name_list)
+    @assert !isnothing(idx) "Available running orders are $(ro_name_list)"
+    idx -= 1
+    R11.RpcRoSetSelected(idx)
+    deactivate(md)
+end
+
+function imagedim(md::ForthDimensionDisplayIOStream)
+    @assert isopen(md) "The microdisplay is not accessible"
+    @assert md.interface === :R11 "Other interfaces except R11 are not supported"
+    disp_type = Ref(UInt8(0))
+    R11.RpcSysGetDisplayType(disp_type)
+    if disp_type[] == 0x00
+        error("Display is not detected")
+    elseif disp_type[] == 0x03
+        (2048, 1536)
+    elseif disp_type[] == 0x05
+        (2048, 2048)
+    elseif disp_type[] == 0xFF
+        error("Unknown display")
+    else
+        error("Unknow display type")
+    end
+end
+
+function trigger_mode(md::ForthDimensionDisplayIOStream)
+    @assert isopen(md) "The microdisplay is not accessible"
+    @assert md.interface === :R11 "Other interfaces except R11 are not supported"
+    ref_act_type = Ref(UInt8(0))
+    R11.RpcRoGetActivationType(ref_act_type)
+    act_type = ref_act_type[]
+    if act_type == 0x01
+        "automatic"
+    elseif act_type == 0x02
+        "software trigger"
+    elseif act_type == 0x04
+        "hardware trigger"
+    else
+        error("Unknown trigger type")
+    end
+end
+
+function trigger(md::ForthDimensionDisplayIOStream)
+    activate(md)
 end
