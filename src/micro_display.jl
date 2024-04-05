@@ -1,7 +1,7 @@
 using .Wrapper.TypeAlias
 using .Wrapper: FDDstruct, FDD, R11
 
-struct ForthDimensionDisplay <: IODeviceName
+struct ForthDimensionDisplay <: ExternalDeviceName
     port::String
     interface::Symbol
     function ForthDimensionDisplay(port, interface)
@@ -11,7 +11,7 @@ struct ForthDimensionDisplay <: IODeviceName
     end
 end
 
-mutable struct ForthDimensionDisplayIOStream <: VariableArrayIOStream
+mutable struct ForthDimensionDisplayIOStream <: ExternalDeviceIOStream
     device_name::String
     device_id::String
     interface::Symbol
