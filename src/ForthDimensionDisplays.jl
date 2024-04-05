@@ -1,6 +1,7 @@
 module ForthDimensionDisplays
 
 using Reexport
+using Preferences
 using ExternalDeviceIOs
 @reexport import ExternalDeviceIOs: activate, deactivate, isactivated
 @reexport import ExternalDeviceIOs.Trigger: trigger_mode, trigger_mode!, trigger
@@ -17,6 +18,7 @@ export ForthDimensionDisplay,
     running_order!
 
 include("API/wrapper.jl")
+using .Wrapper: get_library_path, set_library_path!
 include("micro_display.jl")
 
 end # module ForthDimensionDisplays

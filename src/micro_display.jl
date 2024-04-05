@@ -124,7 +124,7 @@ function running_order!(md::ForthDimensionDisplayIOStream, ro_name::String)
     deactivate(md)
 end
 
-function imagedim(md::ForthDimensionDisplayIOStream)
+function size(md::ForthDimensionDisplayIOStream)
     @assert isopen(md) "The microdisplay is not accessible"
     @assert md.interface === :R11 "Other interfaces except R11 are not supported"
     disp_type = Ref(UInt8(0))
